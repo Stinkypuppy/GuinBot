@@ -211,15 +211,60 @@ def rpsm_loop():
         rps = round((reqs - initial) / 1.5, 1)
         rpm = round(rps * 60, 1)
 
-
 def fetch_proxies():
-    url_list =[
+    url_list = [
         "https://raw.githubusercontent.com/yemixzy/proxy-list/main/proxy-list/data.txt",
         "https://raw.githubusercontent.com/UptimerBot/proxy-list/main/proxies/http.txt",
         "https://raw.githubusercontent.com/rdavydov/proxy-list/main/proxies/http.txt",
         "https://raw.githubusercontent.com/rdavydov/proxy-list/main/proxies/socks4.txt",
-        "https://raw.githubusercontent.com/rdavydov/proxy-list/main/proxies/socks5.txt"
-        
+        "https://raw.githubusercontent.com/rdavydov/proxy-list/main/proxies/socks5.txt",
+        "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-https.txt",
+        "https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/master/https.txt",
+        "https://proxyspace.pro/https.txt",
+        "https://raw.githubusercontent.com/zloi-user/hideip.me/main/https.txt",
+        "https://raw.githubusercontent.com/Anonym0usWork1221/Free-Proxies/main/proxy_files/https_proxies.txt",
+        "https://raw.githubusercontent.com/officialputuid/KangProxy/KangProxy/https/https.txt",
+        "https://api.proxyscrape.com/?request=displayproxies&proxytype=http",
+        "https://www.proxy-list.download/api/v1/get?type=http",
+        "https://www.proxyscan.io/download?type=http",
+        "http://spys.me/proxy.txt",
+        "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt",
+        "https://api.openproxylist.xyz/http.txt",
+        "https://www.my-proxy.com/free-proxy-list.html",
+        "https://raw.githubusercontent.com/shiftytr/proxy-list/master/proxy.txt",
+        "https://www.my-proxy.com/free-anonymous-proxy.html",
+        "https://www.my-proxy.com/free-transparent-proxy.html",
+        "https://www.my-proxy.com/free-proxy-list-2.html",
+        "https://www.my-proxy.com/free-proxy-list-3.html",
+        "https://www.my-proxy.com/free-proxy-list-4.html",
+        "https://proxy50-50.blogspot.com/",
+        "https://www.my-proxy.com/free-proxy-list-5.html",
+        "http://alexa.lr2b.com/proxylist.txt",
+        "http://rootjazz.com/proxies/proxies.txt",
+        "https://www.freeproxychecker.com/result/http_proxies.txt",
+        "https://www.my-proxy.com/free-socks-4-proxy.html",
+        "http://www.proxyserverlist24.top/feeds/posts/default",
+        "https://www.my-proxy.com/free-proxy-list-6.html",
+        "https://www.my-proxy.com/free-proxy-list-7.html",
+        "https://www.my-proxy.com/free-proxy-list-8.html",
+        "http://proxysearcher.sourceforge.net/Proxy%20List.php?type=http",
+        "https://www.my-proxy.com/free-proxy-list-9.html",
+        "https://www.my-proxy.com/free-proxy-list-10.html",
+        "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt",
+        "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/http.txt",
+        "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-http.txt",
+        "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt",
+        "https://raw.githubusercontent.com/sunny9577/proxy-scraper/master/proxies.txt",
+        "https://raw.githubusercontent.com/UserR3X/proxy-list/main/online/http.txt",
+        "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt",
+        "https://raw.githubusercontent.com/opsxcq/proxy-list/master/list.txt",
+        "https://proxy-spider.com/api/proxies.example.txt",
+        "https://multiproxy.org/txt_all/proxy.txt",
+        "http://rootjazz.com/proxies/proxies.txt",
+        "https://raw.githubusercontent.com/clarketm/proxy",
+        "http://k2ysarchive.xyz/proxy/http.txt",
+        "https://proxyspace.pro/http.txt",
+        "https://proxyspace.pro/https.txt"
     ]
     for url in url_list :
         response = requests.get(
