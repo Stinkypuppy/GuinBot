@@ -179,7 +179,7 @@ def send(__device_id, __install_id, cdid, openudid):
                 "host_abi": "x86",
                 "cdid": str(uuid.uuid4())
             }
-        )
+		
             payload = f"item_id={__aweme_id}&play_delta=1"
             sig     = Gorgon(params=params, cookies=None, data=None, unix=int(time.time())).get_value()
 
