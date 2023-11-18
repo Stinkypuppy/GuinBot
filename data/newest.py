@@ -90,4 +90,155 @@ whileTrue:
 if len(self.get_status_services()[0])>1:break
 else:print('Cant get services, retrying...');self.send_captcha();time.sleep(2)
 for service in self.services: table.add_row([f"{Fore.CYAN}{i}{Fore.RESET}", service, f"{Fore.GREEN if 'ago updated' in self.services[service] else Fore.RED}{self.services[service]}{Fore.RESET}"]); i+=1
-table.title = f"{Fore.YELLOW}Active Services Number: {len([x for x in self.services_status if self.services_status[x]])}{Fo
+table.title = f"{Fore.YELLOW}Active Services Number: {len([x for x in self.services_status if self.services_status[x]])}{Fore.RESET}"
+print(table)
+
+def find_video(self):
+if self.service is None: return (False, "You didn't choose the service")
+whileTrue:
+if self.service not in self.services_ids: self.get_status_services(); time.sleep(1)
+request = self.session.post(f'{self.base_url}{self.services_ids[self.service]}', headers={'content-type':'multipart/form-data; boundary=----WebKitFormBoundary0nU8PjANC8BhQgjZ ', 'user-agent':self.headers['user-agent'], 'origin':'https://zefoy.com'}, data=f'-----WebKitFormBoundary0nU8PjANC8BhQgjZ\r\nContent- Disposition: form-data; name="{self.video_key}"\r\n\r\n{self.url}\r\n------WebKitFormBoundary0nU8PjANC8BhQgjZ--\r\n')
+try: self.video_info = base64.b64decode(unquote(request.text.encode()[::-1])).decode()
+except: time.sleep(3); tiếp tục
+if 'Session expired. Please re-login' in self.video_info: print('[LÁMTILO]</> Session expired. Login again...');self.send_captcha(); return
+elif 'service is currently not working' in self.video_info: return (True,'[LÂMTILO]</> Service is currently not working, try again later. | You can change it in the configuration.')
+elif """onsubmit="showHideElements""" in self.video_info:
+self.video_info = [self.video_info.split('" name="')[1].split('"')[0],self.video_info.split('value="')[1].split( '"')[0]]
+return (True, request.text)
+elif 'Checking Timer...' in self.video_info:
+try:
+t=int(re.findall(r'ltm=(\d*);', self.video_info)[0])
+lamtilo = int(re.findall(r'ltm=(\d*);', self.video_info)[0])
+except:
+return (False,)
+if lamtilo==0:self.find_video()
+elif lamtilo >= 1000: print('[LÁMTILO]</> Your IP was banned')
+# print(f'[LâmTILO]</> Waiting time to continue increasing: {t} seconds')
+# for do in range(t,0,-1):
+# blue-=1
+# print(f"[LâmTILO]</> Please wait: {lam}",end="\r")
+# time.sleep(1)
+_=time.time()
+while time.time()-2<_+lamtilo:
+t-=1
+print("[LâmTILO]</> Please wait: {0} ".format(t)+"seconds .", end="\r")
+time.sleep(1)
+
+tiếp tục
+elif 'Too many requests. Please slow' in self.video_info: time.sleep(3)
+else: print(self.video_info)
+
+def use_service(self):
+if self.find_video()[0] is False: return False
+self.token = "".join(random.choices(ascii_letters+digits, k=16))
+request = self.session.post(f'{self.base_url}{self.services_ids[self.service]}', headers={'content-type':f'multipart/form-data; boundary=---- WebKitFormBoundary{self.token}', 'user-agent':self.headers['user-agent'], 'origin':'https://zefoy.com'}, data=f'------ WebKitFormBoundary{self.token}\r\nContent-Disposition: form-data; name="{self.video_info[0]}"\r\n\r\n{self.video_info[1]}\r\n- -----WebKitFormBoundary{self.token}--\r\n')
+try: res = base64.b64decode(unquote(request.text.encode()[::-1])).decode()
+except: time.sleep(3); return ""
+if 'Session expired. Please re-login' in res: print('[LÁMTILO]</> Session expired. Login again...');self.send_captcha(); return ""
+elif 'Too many requests. Please slow' in res: time.sleep(3)
+elif 'service is currently not working' in res: return ('[LÁMTILO]</> The service is currently not working, try again later. | You can change it in the configuration.')
+else: print(res.split("sans-serif;text-align:center;color:green;'>")[1].split("</")[0])
+
+def get_video_info(self):
+request = self.session.get(f'https://tiktok.livecounts.io/video/stats/{urlparse(self.url).path.rpartition("/")[2]}',headers={' authority':'tiktok.livecounts.io','origin':'https://livecounts.io','user-agent':self.headers['user-agent']}).json()
+if 'viewCount' in request: return request
+else: return {'viewCount':0, 'likeCount':0,'commentCount':0,'shareCount':0}
+
+def get_video_id(self, url_ = None, set_url=True):
+if url_ is None: url_ = self.url
+if url_[-1] == '/': url_=url_[:-1]
+url = urlparse(url_).path.rpartition('/')[2]
+if url.isdigit(): self.url = url_; return url_
+request = requests.get(f'https://api.tokcount.com/?type=videoID&username=https://vm.tiktok.com/{url}',headers={'origin': 'https:// tokcount.com','authority': 'api.tokcount.com','user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36'})
+if request.text == '': print('[LÁMTILO]</> Invalid video link'); return False
+else: json_=request.json()
+if 'author' not in json_: print(f'{self.url}| Invalid video link'); return False
+if set_url: self.url = f'https://www.tiktok.com/@{json_["author"]}/video/{json_["id"]}';print(f'Formated video url -- > {self.url}')
+return request.text
+
+def check_config(self):
+
+whileTrue:
+try:
+last_url = self.url
+if last_url != self.url: self.get_video_id()
+except Exception as e: print(e)
+time.sleep(4)
+def update_name(self):
+whileTrue:
+try:
+ctypes.windll.kernel32.SetConsoleTitleA(self.text.encode())
+video_info = self.get_video_info()
+self.text = f"[LÂMTILO]</> | Views: {video_info['viewCount']} "
+except: pass
+time.sleep(5)
+page = "\033[1;37m"
+green_la = "\033[1;32m"
+green_duong = "\033[1;34m"
+do = "\033[1;31m"
+echo = "\033[1;33m"
+heart = "\033[1;35m"
+dac_biet = "\033[32;5;245m\033[1m\033[38;5;39m"
+kt_code = "</>"
+def logo():
+     os.system("cls" if os.name == "nt" else "clear")
+     page = "\033[1;37m"
+     green_la = "\033[1;32m"
+     green_duong = "\033[1;34m"
+     do = "\033[1;31m"
+     echo = "\033[1;33m"
+     heart = "\033[1;35m"
+     dac_biet = "\033[32;5;245m\033[1m\033[38;5;39m"
+     kt_code = "</>"
+     logo=f"""
+
+     {xanh_duong} ██╗░░░░░░█████╗░███╗░░░███╗  ████████╗ ██╗██╗░░░░░ ░█████╗░
+     {page} ██║░░░░░██╔══██╗████╗░████║  ╚══██╔══╝█ █║██║░░░░░ ██╔══██╗
+     {sound} ██║░░░░░███████║██╔████╔██║  ░░░██║░░░█ █║██║░░░░░ ██║░░██║
+     {xanh_la} ██║░░░░░██╔══██║██║╚██╔╝██║  ░░░██║░░░ ██║██║░░░░░ ██║░░██║
+     {heart} ███████╗██║░░██║██║░╚═╝░██║  ░░░██║░░░█ █║███████╗ ╚█████╔╝
+     {dac_biet} ╚══════╝╚═╝░░╚═╝╚═╝░░░░░╚═╝  ░░░╚═╝░░░ ╚═╝╚══════╝ ░╚════╝░
+     {xanh_la} </> Subscribe to Youtube channel: Lam Tilo DVFB to get more vip tools! </>
+     \033[1;37m───────────────────────────────────── ─────── ────────────────
+     {do}[{page}{kt_code}{do}] {vong}TOOL BUFF VIEW TIKTOK
+     {do}[{page}{kt_code}{do}] \033[1;35mADMIN:\033[1;36m LAM TILO
+     {do}[{page}{kt_code}{do}] \033[1;31mZALO: \033[1;33m 0392913785
+     {do}[{page}{kt_code}{do}] {dac_biet}YOUTUBE:\033[1;37m LAM TILO DVFB
+     {do}[{page}{kt_code}{do}] {xanh_la}FACEBOOK:\033[1;37m Pham Trong Lam
+     \033[1;37m───────────────────────────────────── ─────── ────────────────\n"""
+  
+     print(logo)
+now = int(strftime('%d'))
+key1= str(now*1212+234442)
+key ="LamTilo"+ key1
+
+
+# urllam = f"https://subretop1.com/keytool.html?key={key}"
+# token="e6a1485b68cb324cc8880706965f272e16f25c88"
+# link =requests.get(f"https://octolinkz.com/api?api={token}&url={urllam}").json()
+# if link["status"]== "success":
+# logo()
+#link1=link["shortenedUrl"]
+# print(f"{page}[LÁMTILO]</> Link key: {link1}")
+     
+# else:
+#link1=""
+# enter = input(f"{page}[LÁMTILO]</> Enter the key just obtained: ")
+# if enter == key:
+if 1:
+     print(f"{green_la}[LÁMTILO]</> The key is correct, please go to the tool")
+     logo()
+     Z = Zefoy()
+     threading.Thread(target=Z.check_config).start()
+     threading.Thread(target=Z.update_name).start()
+     # time.sleep(5)
+     Z.send_captcha()
+     Z.get_table()
+else:
+     print(f"{do}[LÁMTILO]</> Wrong key, please try again")
+     exit()
+
+whileTrue:
+try:
+if 'Service is currently not working, try again later' in str(Z.use_service()): print(f'{do}[LÂMTILO]</>Service is currently not working, try again later. | Do you have You can change it in the configuration.');time.sleep(5)
+except Exception as e:print(f'SEVERE ERROR | try again in 10 seconds.|| {e}');time.sleep(10)
