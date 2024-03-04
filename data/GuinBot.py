@@ -85,6 +85,7 @@ banner = f"""
 {e621}[{furry}{shep}{e621}] \033[1;35mTikTok:\033[1;36m guinnessgshep
 {e621}[{furry}{shep}{e621}] {blfc}GUINNESS VIEW BOT V3
 \033[1;37m─────────────────────────────────────────────────────────────────────────────"""
+
 class BlockCookies(cookiejar.CookiePolicy):
     return_ok = set_ok = domain_return_ok = path_return_ok = lambda self, *args, **kwargs: False
     netscape = True
@@ -103,74 +104,75 @@ __devices = ["SM-G9900", "SM-A136U1", "SM-M225FV", "SM-E426B", "SM-M526BR", "SM-
                           "SM-A525F", "SM-N976N"]
 __versions = ["190303", "190205", "190204", "190103", "180904", "180804", "180803", "180802",  "270204"]
 class Gorgon:
-	def __init__(self,params:str,data:str,cookies:str,unix:int)->None:self.unix=unix;self.params=params;self.data=data;self.cookies=cookies
-	def hash(self,data:str)->str:
-		try:_hash=str(hashlib.md5(data.encode()).hexdigest())
-		except Exception:_hash=str(hashlib.md5(data).hexdigest())
-		return _hash
-	def get_base_string(self)->str:base_str=self.hash(self.params);base_str=base_str+self.hash(self.data)if self.data else base_str+str('0'*32);base_str=base_str+self.hash(self.cookies)if self.cookies else base_str+str('0'*32);return base_str
-	def get_value(self)->json:base_str=self.get_base_string();return self.encrypt(base_str)
-	def encrypt(self,data:str)->json:
-		unix=self.unix;len=20;key=[223,119,185,64,185,155,132,131,209,185,203,209,247,194,185,133,195,208,251,195];param_list=[]
-		for i in range(0,12,4):
-			temp=data[8*i:8*(i+1)]
-			for j in range(4):H=int(temp[j*2:(j+1)*2],16);param_list.append(H)
-		param_list.extend([0,6,11,28]);H=int(hex(unix),16);param_list.append((H&4278190080)>>24);param_list.append((H&16711680)>>16);param_list.append((H&65280)>>8);param_list.append((H&255)>>0);eor_result_list=[]
-		for (A,B) in zip(param_list,key):eor_result_list.append(A^B)
-		for i in range(len):C=self.reverse(eor_result_list[i]);D=eor_result_list[(i+1)%len];E=C^D;F=self.rbit_algorithm(E);H=(F^4294967295^len)&255;eor_result_list[i]=H
-		result=''
-		for param in eor_result_list:result+=self.hex_string(param)
-		return{'X-Gorgon':'0404b0d30000'+result,'X-Khronos':str(unix)}
-	def rbit_algorithm(self,num):
-		result='';tmp_string=bin(num)[2:]
-		while len(tmp_string)<8:tmp_string='0'+tmp_string
-		for i in range(0,8):result=result+tmp_string[7-i]
-		return int(result,2)
-	def hex_string(self,num):
-		tmp_string=hex(num)[2:]
-		if len(tmp_string)<2:tmp_string='0'+tmp_string
-		return tmp_string
-	def reverse(self,num):tmp_string=self.hex_string(num);return int(tmp_string[1:]+tmp_string[:1],16)
+        def __init__(self,params:str,data:str,cookies:str,unix:int)->None:self.unix=unix;self.params=params;self.data=data;self.cookies=cookies
+        def hash(self,data:str)->str:
+                try:_hash=str(hashlib.md5(data.encode()).hexdigest())
+                except Exception:_hash=str(hashlib.md5(data).hexdigest())
+                return _hash
+        def get_base_string(self)->str:base_str=self.hash(self.params);base_str=base_str+self.hash(self.data)if self.data else base_str+str('0'*32);base_str=base_str+self.hash(self.cookies)if self.cookies else base_str+str('0'*32);return base_str
+        def get_value(self)->json:base_str=self.get_base_string();return self.encrypt(base_str)
+        def encrypt(self,data:str)->json:
+                unix=self.unix;len=20;key=[223,119,185,64,185,155,132,131,209,185,203,209,247,194,185,133,195,208,251,195];param_list=[]
+                for i in range(0,12,4):
+                        temp=data[8*i:8*(i+1)]
+                        for j in range(4):H=int(temp[j*2:(j+1)*2],16);param_list.append(H)
+                param_list.extend([0,6,11,28]);H=int(hex(unix),16);param_list.append((H&4278190080)>>24);param_list.append((H&16711680)>>16);param_list.append((H&65280)>>8);param_list.append((H&255)>>0);eor_result_list=[]
+                for (A,B) in zip(param_list,key):eor_result_list.append(A^B)
+                for i in range(len):C=self.reverse(eor_result_list[i]);D=eor_result_list[(i+1)%len];E=C^D;F=self.rbit_algorithm(E);H=(F^4294967295^len)&255;eor_result_list[i]=H
+                result=''
+                for param in eor_result_list:result+=self.hex_string(param)
+                return{'X-Gorgon':'0404b0d30000'+result,'X-Khronos':str(unix)}
+        def rbit_algorithm(self,num):
+                result='';tmp_string=bin(num)[2:]
+                while len(tmp_string)<8:tmp_string='0'+tmp_string
+                for i in range(0,8):result=result+tmp_string[7-i]
+                return int(result,2)
+        def hex_string(self,num):
+                tmp_string=hex(num)[2:]
+                if len(tmp_string)<2:tmp_string='0'+tmp_string
+                return tmp_string
+        def reverse(self,num):tmp_string=self.hex_string(num);return int(tmp_string[1:]+tmp_string[:1],16)
 
 def send(__device_id, __install_id, cdid, openudid):
     global reqs, _lock, success, fails, rps, rpm
     for x in range(10):
         try:
+            version = random.choice(__versions)
             params = urlencode(
                                 {
-                                    "os_api": "31",
-                                    "device_type": "ONEPLUS_NGQH7",
+                                    "os_api": "25",
+                                    "device_type": random.choice(__devices),
                                     "ssmix": "a",
-                                    "manifest_version_code": "2023109010",
+                                    "manifest_version_code": version,
                                     "dpi": "240",
-                                    "region": "GB",
-                                    "carrier_region": "US",
-                                    "app_name": "musical_ly",
-                                    "version_name": "31.9.1",
-                                    "timezone_offset": "-14400",
-                                    "ab_version": "31.9.1",
+                                    "region": "VN",
+                                    "carrier_region": "VN",
+                                    "app_name": "musically_go",
+                                    "version_name": "27.2.4",
+                                    "timezone_offset": "-28800",
+                                    "ab_version": "27.2.4",
                                     "ac2": "wifi",
                                     "ac": "wifi",
                                     "app_type": "normal",
                                     "channel": "googleplay",
-                                    "update_version_code": "2023109010",
+                                    "update_version_code": version,
                                     "device_platform": "android",
                                     "iid": __install_id,
-                                    "build_number": "31.9.1",
-                                    "locale": "en",
-                                    "op_region": "US",
-                                    "version_code": "310901",
-                                    "timezone_name": "America/New_York",
+                                    "build_number": "27.2.4",
+                                    "locale": "vi",
+                                    "op_region": "VN",
+                                    "version_code": version,
+                                    "timezone_name": "Asia/Ho_Chi_Minh",
                                     "device_id": __device_id,
-                                    "sys_region": "GB",
-                                    "app_language": "en",
+                                    "sys_region": "VN",
+                                    "app_language": "vi",
                                     "resolution": "720*1280",
-                                    "device_brand": "oneplus",
-                                    "language": "en",
-                                    "os_version": "12",
-                                    "aid": "1233"
-                                }                    
-            )
+                                    "device_brand": "samsung",
+                                    "language": "vi",
+                                    "os_version": f"7.{random.randint(1, 9)}.{random.randint(1, 99)}",
+                                    "aid": "1340"
+                                }
+        )
             payload = f"item_id={__aweme_id}&play_delta=1"
             sig     = Gorgon(params=params, cookies=None, data=None, unix=int(time.time())).get_value()
 
@@ -183,7 +185,7 @@ def send(__device_id, __install_id, cdid, openudid):
                     "/aweme/v1/aweme/stats/?" + params
                 ),
                 data    = payload,
-                headers = {'cookie':'sessionid=90c38a59d8076ea0fbc01c8643efbe47','x-gorgon':sig['X-Gorgon'],'x-khronos':sig['X-Khronos'],'user-agent':'okhttp/3.10.0.1'},
+                headers = {'cookie': f'sessionid={"".join(random.choices(string.ascii_letters + string.digits, k=32))}','x-gorgon':sig['X-Gorgon'],'x-khronos':sig['X-Khronos'],'user-agent':'okhttp/3.10.0.1'},
                 verify  = False,
                 proxies = {"http": proxy_format+proxy, "https": proxy_format+proxy} if config['proxy']['use-proxy'] else {}
             )
@@ -191,16 +193,10 @@ def send(__device_id, __install_id, cdid, openudid):
             try:
                 if response.json()['status_code'] == 0:
                     _lock.acquire()
-                    print(f'{e621}[{blfc}🔥 Guinness Shepherd 🔥{e621}] {e621}[{yiff}BUFF VIEW SUCCESS{e621}] {e621}{huff}+: {furry}{success}{e621} View')
+                    print(Colorate.Horizontal(Colors.green_to_blue, f'TikTok Viewbot by BUFFA [ SUCCESS ]: {success}'))
                     success += 1
                     _lock.release()
             except:
-                if _lock.locked():_lock.release()
-                fails += 1
-                continue
-
-        except Exception as e:
-            pass
 
 def rpsm_loop():
     global rps, rpm
@@ -304,19 +300,33 @@ if __name__ == "__main__":
     except:
         exit(f"{e621}[{furry}{shep}{e621}] {e621}INVALID LINK")
     
+        if len(re.findall(r"(\d{18,19})", link)) == 1
+        else re.findall(
+            r"(\d{18,19})",
+            requests.head(link, allow_redirects=True, timeout=5).url
+        )[0]
+    )
+	
+    os.system("cls" if os.name == "nt" else "clear")
+    print("Running...")
+
     _lock = threading.Lock()
     reqs = 0
     success = 0
     fails = 0
     rpm = 0
     rps = 0
-    
+
     threading.Thread(target=rpsm_loop).start()
-    
-    
+
     while True:
+        if success >= number_of_views:
+            print(f"{number_of_views} has been sent !")
+            os._exit(0)
+
         device = random.choice(devices)
 
-        if eval(base64.b64decode("dGhyZWFkaW5nLmFjdGl2ZV9jb3VudCgpIDwgMTAwICMgZG9uJ3QgY2hhbmdlIGNvdW50IG9yIHUgd2lsbCBraWxsIGRldmljZXMgYW5kIHJ1aW4gZnVuIGZvciBvdGhlcnM=")):
+        if threading.active_count() < 100:
             did, iid, cdid, openudid = device.split(':')
-            eval(base64.b64decode('dGhyZWFkaW5nLlRocmVhZCh0YXJnZXQ9c2VuZCxhcmdzPVtkaWQsaWlkLGNkaWQsb3BlbnVkaWRdKS5zdGFydCgp'))
+            threading.Thread(target=send, args=[did, iid, cdid, openudid]).start()
+
